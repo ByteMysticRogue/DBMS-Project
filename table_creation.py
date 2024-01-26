@@ -57,7 +57,7 @@ def creating_table():
             price FLOAT NOT NULL,
             publisher_id INT FOREIGN KEY REFERENCES publisher(publisher_id) ON UPDATE CASCADE,
             author VARCHAR(100),
-            status VARCHAR(50) DEFAULT 'موجود' CHECK ( status IN ('موجود', 'ناموجود', 'اجاره شده') )
+            status VARCHAR(50) DEFAULT 'موجود' CHECK ( status IN ('موجود', 'ناموجود', 'اجاره شده') ),
             date_of_publish DATE
         );
     """
@@ -83,10 +83,10 @@ def creating_table():
     transaction_table = """
         CREATE TABLE transactions (
             transaction_id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-            member_id INT FOREIGN KEY REFERENCES member(member_id) ON UPDATE CASCADE,
-            book_id INT FOREIGN KEY REFERENCES book(book_id) ON UPDATE CASCADE,
-            category_id INT FOREIGN KEY REFERENCES category(category_id) ON UPDATE CASCADE,
-            staff_id INT FOREIGN KEY REFERENCES admin(staff_id) ON UPDATE CASCADE,
+            member_id INT FOREIGN KEY REFERENCES member(member_id) ON UPDATE NO ACTION,
+            book_id INT FOREIGN KEY REFERENCES book(book_id) ON UPDATE NO ACTION,
+            category_id INT FOREIGN KEY REFERENCES category(category_id) ON UPDATE NO ACTION,
+            staff_id INT FOREIGN KEY REFERENCES admin(staff_id) ON UPDATE NO ACTION,
             transaction_date DATE
         );
     """
