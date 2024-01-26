@@ -34,12 +34,17 @@ def creating_table():
         );
     """
 
-    # Create table for staff members
-    staff_table = """
-        CREATE TABLE staff (
+    # Create table for admin members
+    admin_table = """
+        CREATE TABLE admin (
             staff_id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-            first_name VARCHAR(50),
-            last_name VARCHAR(50)
+            username VARCHAR(50) NOT NULL,
+            password VARCHAR(50) NOT NULL,
+            first_name VARCHAR(50) NOT NULL,
+            last_name VARCHAR(50) NOT NULL,
+            email VARCHAR(50),
+            address VARCHAR(100) NOT NULL,
+            phone VARCHAR(20) NOT NULL CHECK ( LEN(phone) <= 20)
         );
     """
 
@@ -47,11 +52,12 @@ def creating_table():
     book_table = """
         CREATE TABLE book (
             book_id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-            category_id INT FOREIGN KEY REFERENCES category(category_id),
+            category_id INT FOREIGN KEY REFERENCES category(category_id) ON UPDATE CASCADE,
             name VARCHAR(100) NOT NULL,
             price FLOAT NOT NULL,
-            publisher_id INT FOREIGN KEY REFERENCES publisher(publisher_id),
+            publisher_id INT FOREIGN KEY REFERENCES publisher(publisher_id) ON UPDATE CASCADE,
             author VARCHAR(100),
+            status VARCHAR(50) DEFAULT 'موجود' CHECK ( status IN ('موجود', 'ناموجود', 'اجاره شده') )
             date_of_publish DATE
         );
     """
@@ -66,7 +72,10 @@ def creating_table():
             last_name VARCHAR(50) NOT NULL,
             email VARCHAR(50),
             address VARCHAR(100) NOT NULL,
-            phone INT NOT NULL
+            phone VARCHAR(20) NOT NULL CHECK ( LEN(phone) <= 20),
+            subscription_date DATE DEFAULT GETDATE(),
+            expire_date DATE,
+            status VARCHAR(50) DEFAULT 'مجاز' CHECK ( status IN ('مسدود', 'مجاز'))
         );
     """
 
@@ -74,26 +83,25 @@ def creating_table():
     transaction_table = """
         CREATE TABLE transactions (
             transaction_id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-            member_id INT FOREIGN KEY REFERENCES member(member_id),
-            book_id INT FOREIGN KEY REFERENCES book(book_id),
-            category_id INT FOREIGN KEY REFERENCES category(category_id),
-            staff_id INT FOREIGN KEY REFERENCES staff(staff_id),
-            transaction_date DATE,
-            status VARCHAR(50)
+            member_id INT FOREIGN KEY REFERENCES member(member_id) ON UPDATE CASCADE,
+            book_id INT FOREIGN KEY REFERENCES book(book_id) ON UPDATE CASCADE,
+            category_id INT FOREIGN KEY REFERENCES category(category_id) ON UPDATE CASCADE,
+            staff_id INT FOREIGN KEY REFERENCES admin(staff_id) ON UPDATE CASCADE,
+            transaction_date DATE
         );
     """
 
     # Check if tables exist before creating them
     if not (check_table_exists('category') and
             check_table_exists('publisher') and
-            check_table_exists('staff') and
+            check_table_exists('admin') and
             check_table_exists('book') and
             check_table_exists('member') and
             check_table_exists('transactions')):
         # Run the creating_table function if any of the tables do not exist
         cursor.execute(category_table)
         cursor.execute(publisher_table)
-        cursor.execute(staff_table)
+        cursor.execute(admin_table)
         cursor.execute(book_table)
         cursor.execute(members_table)
         cursor.execute(transaction_table)
@@ -129,8 +137,14 @@ def creating_indexes():
     else:
         pass
 
+    if not check_index_exists('username_admin_idx'):
+        cursor.execute("CREATE INDEX username_admin_idx ON admin(username)")
+        print("Index username_admin_idx created.")
+    else:
+        pass
+
     if not check_index_exists('first_last_staff_idx'):
-        cursor.execute("CREATE INDEX first_last_staff_idx ON staff(last_name, first_name)")
+        cursor.execute("CREATE INDEX first_last_staff_idx ON admin(last_name, first_name)")
         print("Index first_last_idx created.")
     else:
         pass
