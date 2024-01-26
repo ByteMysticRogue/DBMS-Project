@@ -119,7 +119,7 @@ login_btn = Button(frame, text='LOGIN', bg='#7f7fff', pady=10, width=23, fg='whi
 login_btn.grid(row=9,  columnspan=5, pady=30)
 
 
-dont_have_acc_Label = Label(frame, width=19, text='Don\'t have an account?', fg='black', bg='#babcbb', cursor='hand2', pady=4, font=('Calibre', 9, 'bold'))
+dont_have_acc_Label = Label(frame, width=19, text='Don\'t have an account?', fg='black', bg='#babcbb', pady=4, font=('Calibre', 9, 'bold'))
 dont_have_acc_Label.place(y=170)
 
 create_new_acc = Button(frame, width=19, text='Create New Account', border=0, bg='#babcbb', cursor='hand2', fg='black', font=('Calibre', 8, 'bold'), command=create_one)
