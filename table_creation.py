@@ -74,7 +74,7 @@ def creating_table():
             address VARCHAR(100) NOT NULL,
             phone VARCHAR(20) NOT NULL CHECK ( LEN(phone) <= 20),
             subscription_date DATE DEFAULT GETDATE(),
-            expire_date DATE,
+            expire_date DATE DEFAULT GETDATE(),
             status VARCHAR(50) DEFAULT 'مجاز' CHECK ( status IN ('مسدود', 'مجاز'))
         );
     """
