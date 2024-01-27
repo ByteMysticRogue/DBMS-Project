@@ -1,0 +1,11 @@
+insert into category (book_id,name) values(2,'Drama')
+insert into category (book_id,name) values(2,'Crime')
+insert into category (book_id,name) values(2,'Mystery')
+insert into category (book_id,name) values(3,'Drama')
+insert into category (book_id,name) values(3,'Adventure')
+insert into category (book_id,name) values(4,'Drama')
+insert into category (book_id,name) values(4,'Adventure')
+insert into category (book_id,name) values(5,'Drama')
+insert into category (book_id,name) values(6,'Action')
+insert into category (book_id,name) values(6,'Drama')
+

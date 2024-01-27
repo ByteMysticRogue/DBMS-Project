@@ -1,0 +1,10 @@
+insert into publisher (name, email, address) values ('Buzzdog', 'cscaice0@army.mil', '7654 Myrtle Drive');
+insert into publisher (name, email, address) values ('Buzzdog', 'ctiller1@java.com', '79 Southridge Court');
+insert into publisher (name, email, address) values ('Shufflester', 'apridden2@mac.com', '64125 Reinke Trail');
+insert into publisher (name, email, address) values ('Twimbo', 'jmatchett3@skyrock.com', '972 Brentwood Crossing');
+insert into publisher (name, email, address) values ('Linktype', 'jeickhoff4@tmall.com', '31 Dennis Drive');
+insert into publisher (name, email, address) values ('Skalith', 'eshaxby5@microsoft.com', '0735 Hansons Drive');
+insert into publisher (name, email, address) values ('Devpoint', 'kwindows6@google.com.br', '3343 Darwin Terrace');
+insert into publisher (name, email, address) values ('Rhybox', 'mkeets7@engadget.com', '66 High Crossing Crossing');
+insert into publisher (name, email, address) values ('Thoughtstorm', 'vwellum8@surveymonkey.com', '8 Eastwood Avenue');
+insert into publisher (name, email, address) values ('Skynoodle', 'jeverix9@nba.com', '11532 Kropf Trail');
