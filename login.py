@@ -1,7 +1,7 @@
 from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import messagebox
-from utils import get_cursor, generate_md5, process_sql_files
+from utils import get_cursor, generate_md5, insert_data_to_tables
 from table_creation import creating_table, creating_indexes, create_admin
 import create_account, forgetpassword
 
@@ -11,7 +11,7 @@ def initialize_database():
     creating_table()
     creating_indexes()
     create_admin()
-    process_sql_files()
+    insert_data_to_tables()
     return cursor
 
 
@@ -163,6 +163,7 @@ def main():
     check.place(x=440, y=100)
 
     windows.mainloop()
+
 
 if __name__ == "__main__":
     main()

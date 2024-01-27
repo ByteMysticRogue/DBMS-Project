@@ -40,29 +40,25 @@ def phone_number_validation(phone_str):
         return False
 
 
-def insert_data_to_tables(file_name):
+def insert_data_to_tables():
     try:
-        with open(file_name, 'r') as sql_file:
-            sql_script = sql_file.read()
-
-            lines = sql_script.split(";")
-
-            table_name = file_name.removesuffix(".sql")
-            query = f"SELECT COUNT(*) FROM {table_name};"
-            cursor.execute(query)
-            table_count = cursor.fetchone()[0]
-
-            if table_count == 0:
-                for line in lines:
-                    cursor.execute(line)
-                cursor.commit()
-            else:
-                pass
+        files = []
+        for file in os.listdir():
+            if file.endswith('.sql'):
+                files.append(file)
+        for file in files:
+            with open(file, 'r') as sql_file:
+                sql_script = sql_file.read()
+                lines = sql_script.split(";")
+                table_name = file.removesuffix(".sql").split("-")[1]
+                query = f"SELECT COUNT(*) FROM {table_name};"
+                cursor.execute(query)
+                table_count = cursor.fetchone()[0]
+                if table_count == 0 or table_count == 1:
+                    for line in lines:
+                        cursor.execute(line)
+                    cursor.commit()
+                else:
+                    pass
     except Exception as e:
         print(f"Error executing SQL script: {str(e)}")
-
-
-def process_sql_files():
-    for file in os.listdir():
-        if file.endswith('.sql'):
-            insert_data_to_tables(file)
