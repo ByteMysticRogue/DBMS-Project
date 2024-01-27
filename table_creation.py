@@ -1,5 +1,5 @@
 import pyodbc as odbc
-from utils import get_cursor
+from utils import get_cursor, generate_md5
 
 cursor = get_cursor()
 
@@ -34,20 +34,6 @@ def creating_table():
         );
     """
 
-    # Create table for admin members
-    admin_table = """
-        CREATE TABLE admin (
-            staff_id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-            username VARCHAR(50) NOT NULL,
-            password VARCHAR(50) NOT NULL,
-            first_name VARCHAR(50) NOT NULL,
-            last_name VARCHAR(50) NOT NULL,
-            email VARCHAR(50),
-            address VARCHAR(100) NOT NULL,
-            phone VARCHAR(20) NOT NULL CHECK ( LEN(phone) <= 20)
-        );
-    """
-
     # Create table for books
     book_table = """
         CREATE TABLE book (
@@ -57,7 +43,7 @@ def creating_table():
             price FLOAT NOT NULL,
             publisher_id INT FOREIGN KEY REFERENCES publisher(publisher_id) ON UPDATE CASCADE,
             author VARCHAR(100),
-            status VARCHAR(50) DEFAULT 'موجود' CHECK ( status IN ('موجود', 'ناموجود', 'اجاره شده') ),
+            status VARCHAR(50) DEFAULT 'In Stock' CHECK ( status IN ('In Stock', 'Out of Stock', 'Borrowed') ),
             date_of_publish DATE
         );
     """
@@ -75,7 +61,8 @@ def creating_table():
             phone VARCHAR(20) NOT NULL CHECK ( LEN(phone) <= 20),
             subscription_date DATE DEFAULT GETDATE(),
             expire_date DATE DEFAULT GETDATE(),
-            status VARCHAR(50) DEFAULT 'مجاز' CHECK ( status IN ('مسدود', 'مجاز'))
+            status VARCHAR(50) DEFAULT 'Valid' CHECK ( status IN ('Valid', 'Suspend')),
+            role VARCHAR(20) DEFAULT 'User' CHECK ( role IN ('Admin', 'User'))
         );
     """
 
@@ -86,7 +73,6 @@ def creating_table():
             member_id INT FOREIGN KEY REFERENCES member(member_id) ON UPDATE NO ACTION,
             book_id INT FOREIGN KEY REFERENCES book(book_id) ON UPDATE NO ACTION,
             category_id INT FOREIGN KEY REFERENCES category(category_id) ON UPDATE NO ACTION,
-            staff_id INT FOREIGN KEY REFERENCES admin(staff_id) ON UPDATE NO ACTION,
             transaction_date DATE
         );
     """
@@ -94,14 +80,12 @@ def creating_table():
     # Check if tables exist before creating them
     if not (check_table_exists('category') and
             check_table_exists('publisher') and
-            check_table_exists('admin') and
             check_table_exists('book') and
             check_table_exists('member') and
             check_table_exists('transactions')):
         # Run the creating_table function if any of the tables do not exist
         cursor.execute(category_table)
         cursor.execute(publisher_table)
-        cursor.execute(admin_table)
         cursor.execute(book_table)
         cursor.execute(members_table)
         cursor.execute(transaction_table)
@@ -137,21 +121,22 @@ def creating_indexes():
     else:
         pass
 
-    if not check_index_exists('username_admin_idx'):
-        cursor.execute("CREATE INDEX username_admin_idx ON admin(username)")
-        print("Index username_admin_idx created.")
+def create_admin():
+    # Check if an admin already exists
+    check_admin_query = "SELECT COUNT(*) FROM member WHERE role = 'Admin';"
+    cursor.execute(check_admin_query)
+    admin_count = cursor.fetchone()[0]
+
+    if admin_count == 0:
+        # If no admin exists, create a new admin
+        creating_admin_query = """
+            INSERT INTO member (username, password, first_name, last_name, email, address, phone, role)
+            VALUES ('admin', ?, 'Amir', 'Benny', 'amirbenny@gmail.com', 'iran', '+98921111111', 'Admin')
+        """
+        hashed_password = generate_md5("123456")
+        cursor.execute(creating_admin_query, hashed_password)
+        cursor.commit()
+        cursor.close()
+        print("Admin Created Successfully!")
     else:
         pass
-
-    if not check_index_exists('first_last_staff_idx'):
-        cursor.execute("CREATE INDEX first_last_staff_idx ON admin(last_name, first_name)")
-        print("Index first_last_idx created.")
-    else:
-        pass
-
-
-creating_table()
-creating_indexes()
-
-cursor.commit()
-cursor.close()
