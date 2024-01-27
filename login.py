@@ -1,16 +1,23 @@
 from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import messagebox
-from utils import get_cursor, generate_md5
+from utils import get_cursor, generate_md5, process_sql_files
 from table_creation import creating_table, creating_indexes, create_admin
 import create_account, forgetpassword
 
-def main():
+
+def initialize_database():
+    cursor = get_cursor()
     creating_table()
     creating_indexes()
     create_admin()
+    process_sql_files()
+    return cursor
 
-    cursor = get_cursor()
+
+def main():
+
+    cursor = initialize_database()
 
     windows = Tk()
 
@@ -31,6 +38,7 @@ def main():
 
 
     def login():
+        cursor = get_cursor()
         if idEntry.get() == '' or password_entry.get() == '':
             messagebox.showerror('Alert', 'Please enter both username and password!')
         else:
@@ -47,8 +55,10 @@ def main():
                 # Verify the entered password against the stored hash
                 stored_password_hash = user[2]
                 entered_password_hash = generate_md5(password_entry.get())
-                if user[-1] != variable1.get():
-                    messagebox.showerror('Alert!', 'You Don\'t have Admin Previlages!')
+                if user[-1] == 'Admin' and variable1.get() == 'User':
+                    messagebox.showerror('Alert!', 'You Chose The Wrong Role!')
+                elif user[-1] == 'User' and variable1.get() == 'Admin':
+                    messagebox.showerror('Alert!', 'You Don\'t Have Admin Previlages!')
                 else:
                     if entered_password_hash == stored_password_hash:
                         messagebox.showinfo('Success', 'Login Successful')

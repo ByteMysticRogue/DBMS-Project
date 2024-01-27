@@ -5,8 +5,8 @@ from tkinter import messagebox
 import login
 from utils import get_cursor, generate_md5, email_validation, phone_number_validation
 
+
 def main():
-    cursor = get_cursor()
 
     windows = Tk()
     windows.geometry('540x640')
@@ -41,8 +41,8 @@ def main():
 
     def submit():
 
-        if firstname_Entry.get()=='' or lastname_Entry.get()=='' or email_entry.get()=='' \
-                or username_Entry.get()=='' or password_Entry.get()=='' or \
+        if firstname_Entry.get() == '' or lastname_Entry.get() == '' or email_entry.get() == '' \
+                or username_Entry.get() == '' or password_Entry.get() == '' or \
                 re_enter_password_Entry.get()=='':
                 messagebox.showerror('Alert!', 'All Fields must be entered') #this is to check if all the entry fields are
                 # empty if it is true it'll show a msgbox error
@@ -54,16 +54,25 @@ def main():
             messagebox.showerror('Alert!', 'Email Address Or Phone Number Are not valid!')
 
         else:
+            cursor = get_cursor()
             try:
-                insert_user_to_db = """
-                    INSERT INTO member (username,password,first_name,last_name,email,address,phone)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                query = """
+                    SELECT username, COUNT(*) FROM member WHERE username = ? GROUP BY username;
                 """
-                cursor.execute(insert_user_to_db, (username_Entry.get(), generate_md5(password_Entry.get()), firstname_Entry.get(), lastname_Entry.get(), \
-                                                   email_entry.get(), address_entry.get(), phone_num_entry.get()))
-                cursor.commit()
-                cursor.close()
-                messagebox.showinfo('Success', 'Successful Registration.')
+                cursor.execute(query, username_Entry.get())
+                count = cursor.fetchone()
+                if count[1] > 0:
+                    messagebox.showerror("Alert!", f"This username: {count[0]} Is Taken!")
+                else:
+                    insert_user_to_db = """
+                        INSERT INTO member (username,password,first_name,last_name,email,address,phone)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """
+                    cursor.execute(insert_user_to_db, (username_Entry.get(), generate_md5(password_Entry.get()), firstname_Entry.get(), lastname_Entry.get(), \
+                                                       email_entry.get(), address_entry.get(), phone_num_entry.get()))
+                    cursor.commit()
+                    cursor.close()
+                    messagebox.showinfo('Success', 'Successful Registration.')
             except Exception as e:
                 print(f"Error: {e}")
 
