@@ -7,7 +7,7 @@ def main():
     windows = Tk()
 
     windows.title("Library Management System")
-    windows.geometry('600x400')
+    windows.geometry('600x500')
     windows.resizable(0, 0)
 
     def show_book_list():
