@@ -4,6 +4,7 @@ from tkinter import messagebox
 from utils import get_cursor, generate_md5, insert_data_to_tables
 from table_creation import creating_table, creating_indexes, create_admin
 import create_account, forgetpassword
+import admin_panel
 
 
 def initialize_database():
@@ -36,6 +37,9 @@ def main():
         windows.destroy()
         create_account.main()
 
+    def admin_main():
+        windows.destroy()
+        admin_panel.main()
 
     def login():
         cursor = get_cursor()
@@ -60,10 +64,11 @@ def main():
                 elif user[-1] == 'User' and variable1.get() == 'Admin':
                     messagebox.showerror('Alert!', 'You Don\'t Have Admin Previlages!')
                 else:
-                    if entered_password_hash == stored_password_hash:
+                    if entered_password_hash == stored_password_hash and user[-1] == 'Admin':
                         messagebox.showinfo('Success', 'Login Successful')
-                        idEntry.delete(0, END)
-                        password_entry.delete(0, END)
+                        admin_main()
+                    elif entered_password_hash == stored_password_hash and user[-1] == 'User':
+                        None
                     else:
                         messagebox.showerror('Alert!', 'Incorrect password')
 
